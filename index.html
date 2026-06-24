@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Cricket Scorer</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────── -->
+<div id="header">
+    <h1 id="heading">Cricket <span class="accent">Scorer</span></h1>
+    <div id="instruction-container">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;opacity:.7">
+            <circle cx="8" cy="8" r="7" stroke="#8BA3CC" stroke-width="1.5"/>
+            <path d="M8 7v5M8 5v.5" stroke="#8BA3CC" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <p id="instruction-message">Add team names and players by clicking the buttons below, before beginning innings.</p>
+    </div>
+</div>
+
+<!-- ── Main layout ────────────────────────────────────────── -->
+<div class="container-fluid">
+  <div id="left-container">
+
+    <!-- Teams -->
+    <button id="home-team-name" type="button">
+        <span class="team-name" id="home-name">Home</span>
+        <div id="home-score">
+            <span id="home-wickets">0</span><span style="opacity: .8;margin:0 1px">/</span><span id="home-runs">0</span>
+        </div>
+    </button>
+
+    <!-- Team modal -->
+    <div id="team-modal" class="modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div id="team-modal-tab-btns">
+                        <button type="button" class="btn btn-primary" id="team-modal-tab">Team Name</button>
+                        <button type="button" class="btn btn-secondary" id="players-modal-tab">Players</button>
+                    </div>
+                    <button type="button" id="close-team-modal">Close</button>
+                </div>
+                <div class="modal-body">
+                    <div class="tab-active" id="team-tab-content">
+                        <label for="input-team-name" id="enter-team-name">Enter Team Name</label><br>
+                        <input type="text" id="input-team-name" placeholder="Team name…">
+                    </div>
+                    <div class="tab-inactive" id="players-tab-content">
+                        <p id="input-players-modal-header">Input Players (First &amp; Last Name)</p>
+                        <table id="input-players-table">
+                            <tr><td><label for="player1">1.</label></td><td><input type="text" class="player-name-input" id="player1"></td></tr>
+                            <tr><td><label for="player2">2.</label></td><td><input type="text" class="player-name-input" id="player2"></td></tr>
+                            <tr><td><label for="player3">3.</label></td><td><input type="text" class="player-name-input" id="player3"></td></tr>
+                            <tr><td><label for="player4">4.</label></td><td><input type="text" class="player-name-input" id="player4"></td></tr>
+                            <tr><td><label for="player5">5.</label></td><td><input type="text" class="player-name-input" id="player5"></td></tr>
+                            <tr><td><label for="player6">6.</label></td><td><input type="text" class="player-name-input" id="player6"></td></tr>
+                            <tr><td><label for="player7">7.</label></td><td><input type="text" class="player-name-input" id="player7"></td></tr>
+                            <tr><td><label for="player8">8.</label></td><td><input type="text" class="player-name-input" id="player8"></td></tr>
+                            <tr><td><label for="player9">9.</label></td><td><input type="text" class="player-name-input" id="player9"></td></tr>
+                            <tr><td><label for="player10">10.</label></td><td><input type="text" class="player-name-input" id="player10"></td></tr>
+                            <tr><td><label for="player11">11.</label></td><td><input type="text" class="player-name-input" id="player11"></td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="submit-team-modal">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="away-team-name" type="button">
+        <span class="team-name" id="away-name">Away</span>
+        <div id="away-score">
+            <span id="away-wickets">0</span><span style="opacity: .8;margin:0 1px">/</span><span id="away-runs">0</span>
+        </div>
+    </button>
+
+    <button id="over-limit-btn" type="button">
+        Over Limit: <span id="over-limit-view">40</span>
+    </button>
+
+    <!-- Over modal -->
+    <div id="over-modal" class="modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="justify-content:flex-end">
+                    <button type="button" id="close-over-modal">Close</button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="enter-over-limit">Enter Over Limit</h4>
+                    <input type="number" id="over-limit" placeholder="1–80" value="40">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="submit-over-modal">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batting card -->
+    <div class="stats-card">
+        <div class="stats-card-header">
+            <span class="stats-card-header-label" id="batting-heading">Batting</span>
+            <div class="stats-card-header-cols">
+                <span>R</span><span>B</span><span>4S</span><span>6S</span><span>SR</span>
+            </div>
+        </div>
+        <!-- hidden originals kept for JS targeting -->
+        <table id="batting-row" style="display:none"><tr><td id="batting-stats"></td></tr></table>
+
+        <div style="padding:0.5rem 0; display:flex; flex-direction:column; gap:0.4rem;">
+            <button id="batter1" type="button">
+                <span id="batter1-name" class="batter-name">Batter #1</span>
+                <span id="batter1-nums">
+                    <span id="batter1-runs">0</span>
+                    <span id="batter1-balls">0</span>
+                    <span id="batter1-fours">0</span>
+                    <span id="batter1-sixes">0</span>
+                    <span id="batter1-sr">0</span>
+                </span>
+            </button>
+            <button id="batter2" type="button">
+                <span id="batter2-name" class="batter-name">Batter #2</span>
+                <span id="batter2-nums">
+                    <span id="batter2-runs">0</span>
+                    <span id="batter2-balls">0</span>
+                    <span id="batter2-fours">0</span>
+                    <span id="batter2-sixes">0</span>
+                    <span id="batter2-sr">0</span>
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Extras card -->
+    <div class="stats-card">
+        <div class="stats-card-header">
+            <span class="stats-card-header-label" id="extras-heading">Extras</span>
+        </div>
+        <table id="extras-table" style="display:none"><tr><td id="extras-stats"></td></tr></table>
+        <div style="padding:0.6rem 1rem;">
+            <div class="extras-inline">
+                <span><span class="ex-label">NB</span><span class="ex-val" id="innings-noballs">0</span></span>
+                <span><span class="ex-label">WD</span><span class="ex-val" id="innings-wides">0</span></span>
+                <span><span class="ex-label">B</span><span class="ex-val" id="innings-byes">0</span></span>
+                <span><span class="ex-label">LB</span><span class="ex-val" id="innings-legbyes">0</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bowling card -->
+    <div class="stats-card">
+        <div class="stats-card-header">
+            <span class="stats-card-header-label" id="bowling-heading">Bowling</span>
+            <div class="stats-card-header-cols cols-econ">
+                <span>O</span><span>M</span><span>R</span><span>W</span><span>ECON</span>
+            </div>
+        </div>
+        <table id="bowling-row" style="display:none"><tr><td id="bowling-stats"></td></tr></table>
+        <div style="padding:0.5rem 0;">
+            <button id="current-bowler" type="button">
+                <span id="current-bowler-name" class="bowler-name">Bowler #1</span>
+                <span id="current-bowler-stats">
+                    <span id="cbo">0</span>
+                    <span id="cbm">0</span>
+                    <span id="cbr">0</span>
+                    <span id="cbw">0</span>
+                    <span id="cbe">0</span>
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Run buttons -->
+    <div id="run-buttons">
+        <button id="dot-ball">·</button>
+        <button id="one-runs" class="run-btn">1</button>
+        <button id="two-runs" class="run-btn">2</button>
+        <button id="three-runs" class="run-btn">3</button>
+        <button id="four-runs" class="run-btn">4</button>
+        <button id="six-runs" class="run-btn">6</button>
+        <button id="five-plus-runs" class="run-btn">5+</button>
+    </div>
+
+    <!-- Event buttons -->
+    <div id="event-buttons">
+        <button id="nb-btn" class="event-btn">NB</button>
+        <button id="wd-btn" class="event-btn">WD</button>
+        <button id="b-btn" class="event-btn">B</button>
+        <button id="lb-btn" class="event-btn">LB</button>
+        <button id="wicket-btn" class="event-btn">Wicket</button>
+    </div>
+
+    <!-- Event modal -->
+    <div id="event-modal" class="modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="justify-content:flex-end">
+                    <button type="button" id="close-event-modal">Close</button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="event-action-header"></h4>
+                    <div id="nb-extra-type" class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="nb-extra" value="runs" id="nb-extra-runs">
+                            <span>+ Runs</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="nb-extra" value="byes" id="nb-extra-byes">
+                            <span>+ Byes</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="nb-extra" value="legbyes" id="nb-extra-legbyes">
+                            <span>+ Leg Byes</span>
+                        </label>
+                    </div>
+                    <input type="number" id="event-action" value="1">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="submit-event-modal">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wicket modal -->
+    <div id="wicket-modal" class="modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="justify-content:flex-end">
+                    <button type="button" id="close-wicket-modal">Close</button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="enter-over-limit">Enter Over Limit:</h4>
+                    <input type="number" id="over-limit" placeholder="1–80" value="40">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="submit-wicket-modal">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  </div><!-- /left-container -->
+
+  <div id="right-container"></div>
+</div>
+
+<script src="index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>
