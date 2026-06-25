@@ -1,4 +1,3 @@
-
 const dotBall = document.querySelector("#dot-ball");
 const oneRuns = document.querySelector("#one-runs");
 const twoRuns = document.querySelector("#two-runs");
@@ -78,13 +77,22 @@ awayTeamNameBtn.addEventListener("click", function() {
 function openTeamModal(team) {
     teamModal.style.display = "block";
     activeModalTeam = team;
-    teamName.value = "";
+    teamName.value = team === "home" ? homeName.innerText : awayName.innerText;
     setActiveTeamOrPlayerTab("team");
     if (team === "home") {
         enterTeamName.innerText = "Home Team Name:";
     } else {
         enterTeamName.innerText = "Away Team Name:";   
     }
+    populatePlayerInputs(team);
+}
+
+function populatePlayerInputs(team) {
+    const existingPlayers = teams[team];
+    playerInputs.forEach((input, index) => {
+        const player = existingPlayers[index];
+        input.value = player ? player.name : "";
+    });
 }
 
 function closeTeamModal() {
@@ -146,7 +154,7 @@ const wideBtn = document.querySelector("#wd-btn");
 const byesBtn = document.querySelector("#b-btn");
 const legByesBtn = document.querySelector("#lb-btn");
 const eventActionInput = document.querySelector("#event-action");
-const nbExtraType = document.querySelector("#nb-extra-type");
+const nbExtraTypeGroup = document.querySelector("#nb-extra-type");
 let activeModalEvent = null;
 
 noBallBtn.addEventListener("click", function() {
@@ -165,10 +173,11 @@ legByesBtn.addEventListener("click", function() {
 function openEventModal(event) {
     eventModal.style.display = "block";
     activeModalEvent = event;
+    eventActionInput.value = eventActionInput.defaultValue;
 
     if(event === "nb") {
         eventActionHeader.innerText = "Total No Balls:"; 
-        nbExtraType.style.display = "flex";   
+        nbExtraTypeGroup.style.display = "flex";   
         const nbRadios = document.querySelectorAll('input[name="nb-extra"]');
         nbRadios.forEach(radio => radio.checked = false);
     } else if(event === "wd") {
@@ -187,31 +196,126 @@ function getNbExtraType() {
 
 function closeEventModal() {
     eventModal.style.display = "none";
-    nbExtraType.style.display = "none";
+    nbExtraTypeGroup.style.display = "none";
 }
 
 function updateEventModal(event) {
-    activeModalEvent = event;
-    if(event === "nb") {
-        
-    } else if(event === "wd") {
-               
-    } else if(event === "b") {
-        
-    } else if(event === "lb") {
-        
-    }
+    const extrasAmount = Number(eventActionInput.value);
+    const nbExtraType = activeModalEvent === "nb" ? getNbExtraType() : null;
     closeEventModal();
+    return { event: activeModalEvent, extrasAmount, nbExtraType };
 }
 
 closeEventModalBtn.addEventListener("click", closeEventModal);
 submitEventModalBtn.addEventListener("click", updateEventModal);
 
 //END
+
+//WICKET MODAL
+const wicketModal = document.querySelector("#wicket-modal");
+const wicketBtn = document.querySelector("#wicket-btn");
+const closeWicketModalBtn = document.querySelector("#close-wicket-modal");
+const submitWicketModalBtn = document.querySelector("#submit-wicket-modal");
+const dismissalMethodSelect = document.querySelector("#dismissal-method");
+const fielderSelectWrap = document.querySelector("#fielder-select-wrap");
+const fielderSelect = document.querySelector("#fielder-select");
+const strikerOutLabel = document.querySelector("#striker-out-label");
+const nonstrikerOutLabel = document.querySelector("#nonstriker-out-label");
+const DISMISSALS_NEEDING_FIELDER = ["caught", "runout", "stumped"];
+const DISMISSALS_CREDITING_BOWLER = ["bowled", "caught", "lbw", "stumped", "hitwicket"];
+
+function getBattingTeam() {
+    return teams.home.length > 0 ? "home" : "away";
+}
+
+function getFieldingTeam() {
+    return getBattingTeam() === "home" ? "away" : "home";
+}
+
+function populateFielderSelect() {
+    const fieldingTeam = getFieldingTeam();
+    fielderSelect.innerHTML = "";
+    teams[fieldingTeam].forEach((player) => {
+        const option = document.createElement("option");
+        option.value = player.name;
+        option.innerText = player.name;
+        fielderSelect.appendChild(option);
+    });
+}
+
+function updateFielderVisibility() {
+    const method = dismissalMethodSelect.value;
+    if (DISMISSALS_NEEDING_FIELDER.includes(method)) {
+        fielderSelectWrap.classList.remove("conditional-field-hidden");
+        populateFielderSelect();
+    } else {
+        fielderSelectWrap.classList.add("conditional-field-hidden");
+    }
+}
+
+dismissalMethodSelect.addEventListener("change", updateFielderVisibility);
+
+function openWicketModal() {
+    wicketModal.style.display = "block";
+    dismissalMethodSelect.value = "bowled";
+    strikerOutLabel.innerText = document.querySelector("#batter1-name").innerText;
+    nonstrikerOutLabel.innerText = document.querySelector("#batter2-name").innerText;
+    document.querySelector("#batsman-out-striker").checked = true;
+    updateFielderVisibility();
+}
+
+function closeWicketModal() {
+    wicketModal.style.display = "none";
+}
+
+function getBatsmanOut() {
+    const selected = document.querySelector('input[name="batsman-out"]:checked');
+    return selected ? selected.value : "striker";
+}
+
+function updateWicketModal() {
+    const method = dismissalMethodSelect.value;
+    const batsmanOut = getBatsmanOut();
+    const needsFielder = DISMISSALS_NEEDING_FIELDER.includes(method);
+    const fielder = needsFielder ? fielderSelect.value : null;
+    const creditBowler = DISMISSALS_CREDITING_BOWLER.includes(method);
+    closeWicketModal();
+    return { method, batsmanOut, fielder, creditBowler };
+}
+
+wicketBtn.addEventListener("click", openWicketModal);
+closeWicketModalBtn.addEventListener("click", closeWicketModal);
+submitWicketModalBtn.addEventListener("click", updateWicketModal);
+
+//END
 //RUN BUTTONS
 const homeRuns = document.querySelector("#home-runs");
 let runsCount = 0;
 const numOfRunButtons = document.querySelectorAll(".run-btn").length;
+
+const fiveRunsModal = document.querySelector("#five-runs-modal");
+const closeFiveRunsBtn = document.querySelector("#close-five-runs-modal");
+const submitFiveRunsBtn = document.querySelector("#submit-five-runs-modal");
+const fiveRunsValue = document.querySelector("#five-runs-value");
+
+function openFiveRunsModal() {
+    fiveRunsModal.style.display = "block";
+    fiveRunsValue.value = fiveRunsValue.defaultValue;
+}
+
+function closeFiveRunsModal() {
+    fiveRunsModal.style.display = "none";
+}
+
+function updateFiveRunsModal() {
+    runsCount += Number(fiveRunsValue.value);
+    closeFiveRunsModal();
+    addRun();
+}
+
+fivePlusRuns.addEventListener("click", openFiveRunsModal);
+closeFiveRunsBtn.addEventListener("click", closeFiveRunsModal);
+submitFiveRunsBtn.addEventListener("click", updateFiveRunsModal);
 
 for (let i = 0; i < numOfRunButtons; i++) {
     document.querySelectorAll(".run-btn")[i].addEventListener("click", function() {
@@ -235,10 +339,6 @@ for (let i = 0; i < numOfRunButtons; i++) {
                 break;
             case "6":
                 runsCount += 6;
-                addRun();
-                break;
-            case "5+":
-                runsCount += 5;
                 addRun();
                 break;
             default:
