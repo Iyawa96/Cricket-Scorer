@@ -426,3 +426,4 @@ function updateBatters() {
         secondBatterName.innerText = teams.home[1].name;
     }
 }
+
