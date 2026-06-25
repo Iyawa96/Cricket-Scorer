@@ -331,8 +331,7 @@ body {
 .event-btn:active { transform: scale(0.96); }
 
 /* ── Modals ──────────────────────────────────────────────────── */
-#over-modal,
-#team-modal, #event-modal {
+#over-modal, #team-modal, #event-modal, #wicket-modal, #five-runs-modal {
   display: none;
   position: fixed;
   inset: 0;
@@ -343,8 +342,7 @@ body {
   justify-content: center;
 }
 
-#over-modal.modal.show,
-#team-modal.modal.show, #event-modal.modal.show {
+#over-modal.modal.show, #team-modal.modal.show, #event-modal.modal.show, #wicket-modal.modal.show, #five-runs-modal.modal.show {
   display: flex !important;
 }
 
@@ -388,7 +386,7 @@ body {
   font-weight: 600;
 }
 
-#close-team-modal, #close-over-modal, #close-event-modal, #close-wicket-modal {
+#close-team-modal, #close-over-modal, #close-event-modal, #close-wicket-modal, #close-five-runs-modal {
   background: transparent;
   border: 1px solid rgba(255,77,109,0.4);
   color: var(--danger);
@@ -400,9 +398,9 @@ body {
   cursor: pointer;
   transition: background 0.15s;
 }
-#close-team-modal:hover, #close-over-modal:hover, #close-event-modal:hover { background: rgba(255,77,109,0.12); }
+#close-team-modal:hover, #close-over-modal:hover, #close-event-modal:hover, #close-wicket-modal:hover, #close-five-runs-modal:hover { background: rgba(255,77,109,0.12); }
 
-#enter-over-limit, #event-action-header {
+#enter-over-limit, #event-action-header, #enter-five-runs-value {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 1.3rem;
   font-weight: 700;
@@ -411,7 +409,7 @@ body {
   text-align: center;
 }
 
-#over-limit, #event-action {
+#over-limit, #event-action, #five-runs-value {
   display: block;
   width: 100px;
   margin: 0 auto 0.5rem;
@@ -430,11 +428,15 @@ body {
 
 /* ── No-ball extra-type radio group ──────────────────────────── */
 .radio-group {
-  display: none; /* shown only for the "nb" event via JS */
+  display: flex; /* shown only for the "nb" event via JS */
   justify-content: center;
   gap: 0.6rem;
   margin-top: 0.75rem;
   margin-bottom: 0.75rem;
+}
+
+.radio-group-hidden {
+  display: none;
 }
  
 .radio-option {
@@ -503,7 +505,7 @@ body {
 #input-players-table td { padding: 0.2rem 0.4rem; color: var(--muted); font-size: 0.85rem; }
 #input-players-modal-header { font-size: 1rem; font-weight: 600; color: var(--navy); margin-bottom: 0.5rem; }
 
-#submit-team-modal, #submit-over-modal, #submit-event-modal {
+#submit-team-modal, #submit-over-modal, #submit-event-modal, #submit-wicket-modal, #submit-five-runs-modal {
   background: var(--teal);
   border: none;
   border-radius: 6px;
@@ -514,7 +516,7 @@ body {
   cursor: pointer;
   transition: filter 0.15s;
 }
-#submit-team-modal:hover, #submit-over-modal:hover, #submit-event-modal:hover { filter: brightness(1.1); }
+#submit-team-modal:hover, #submit-over-modal:hover, #submit-event-modal:hover, #submit-wicket-modal:hover, #submit-five-runs-modal:hover { filter: brightness(1.1); }
 
 /* Bootstrap btn overrides for modal tab buttons */
 .btn-primary {
@@ -530,6 +532,55 @@ body {
 /* ── Tabs ────────────────────────────────────────────────────── */
 .tab-active  { display: block; }
 .tab-inactive { display: none; }
+
+/* ── Wicket modal: dismissal dropdown + conditional fielder ──── */
+#wicket-type-header,
+#batsman-out-header {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+ 
+#batsman-out-header { margin-top: 1.1rem; }
+ 
+#dismissal-method,
+#fielder-select {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  margin: 0 auto;
+  background: var(--navy-light);
+  border: 1px solid rgba(41,121,255,0.4);
+  border-radius: 6px;
+  color: var(--white);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.6rem;
+  cursor: pointer;
+}
+ 
+#dismissal-method:focus,
+#fielder-select:focus { outline: none; border-color: var(--blue); }
+ 
+.conditional-field {
+  margin-top: 0.85rem;
+}
+ 
+/* Hidden by default; JS shows this only for dismissals that need a fielder */
+.conditional-field-hidden {
+  display: none;
+}
+ 
+#fielder-select-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 0.35rem;
+}
 
 /* ── Section wrappers injected by HTML structure ─────────────── */
 .section-label {
