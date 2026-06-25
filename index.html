@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Online Cricket Scorer</title>
+    <link rel="icon" type="image/png" href="cricket_icon.png">
     <link rel="stylesheet" href="styles.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
@@ -187,6 +188,23 @@
         <button id="six-runs" class="run-btn">6</button>
         <button id="five-plus-runs" class="run-btn">5+</button>
     </div>
+    <!-- 5+ modal -->
+    <div id="five-runs-modal" class="modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="justify-content:flex-end">
+                    <button type="button" id="close-five-runs-modal">Close</button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="enter-five-runs-value">Enter Runs:</h4>
+                    <input type="number" id="five-runs-value" value="5">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="submit-five-runs-modal">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Event buttons -->
     <div id="event-buttons">
@@ -206,7 +224,7 @@
                 </div>
                 <div class="modal-body">
                     <h4 id="event-action-header"></h4>
-                    <div id="nb-extra-type" class="radio-group">
+                    <div id="nb-extra-type" class="radio-group" style="display: none;">
                         <label class="radio-option">
                             <input type="radio" name="nb-extra" value="runs" id="nb-extra-runs">
                             <span>+ Runs</span>
@@ -237,8 +255,36 @@
                     <button type="button" id="close-wicket-modal">Close</button>
                 </div>
                 <div class="modal-body">
-                    <h4 id="enter-over-limit">Enter Over Limit:</h4>
-                    <input type="number" id="over-limit" placeholder="1–80" value="40">
+                    <h4 id="wicket-type-header">Wicket Type:</h4>
+                    <div id="wicket-type">
+                        <select id="dismissal-method">
+                            <option value="bowled">Bowled</option>
+                            <option value="caught">Caught</option>
+                            <option value="lbw">LBW</option>
+                            <option value="runout">Run Out</option>
+                            <option value="stumped">Stumped</option>
+                            <option value="hitwicket">Hit Wicket</option>
+                            <option value="retired">Retired Hurt</option>
+                            <option value="obstructing">Obstructing the Field</option>
+                        </select>
+                    </div>
+                    <!-- Only shown for caught / run out / stumped -->
+                    <div id="fielder-select-wrap" class="conditional-field">
+                        <label for="fielder-select" id="fielder-select-label">Fielder:</label>
+                        <select id="fielder-select"></select>
+                    </div>
+ 
+                    <h4 id="batsman-out-header">Batsman Out:</h4>
+                    <div id="batsman-out-type" class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="batsman-out" value="striker" id="batsman-out-striker" checked>
+                            <span id="striker-out-label">Striker</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="batsman-out" value="non-striker" id="batsman-out-nonstriker">
+                            <span id="nonstriker-out-label">Non-Striker</span>
+                        </label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" id="submit-wicket-modal">Submit</button>
